@@ -48,17 +48,19 @@ routes.get('/notes/:noteId', async(req, res) => {
 });
 
 //TODO - Update a Note with noteId
-routes.patch("/notes/:noteId", async (req, res) => {
+routes.put("/notes/:noteId", async (req, res) => {
     //res.send({message: "Update existing Book By Id"})
-
-    try {
-        const updatedNote = await noteModel.findByIdAndUpdate(req.params.bookid, req.body)
-        //const book = await newBook.save()
-        res.status(201).send(updatedNote)
-    } catch (error) {
-        res.status(400).send(error)
-    }
-})
+    if (!req.body.content) {
+        return res.status(400).send({
+          message: "Note content can not be empty",
+        });
+      }
+      //TODO - Write your code here to update the note using noteid
+      else {
+        await noteModel.findByIdAndUpdate(req.params.noteId, req.body.content);
+        res.send("Updated successfully");
+      }
+    });         
 
 
 //TODO - Delete a Note with noteId
@@ -67,14 +69,11 @@ routes.delete('/notes/:noteId', async(req, res) => {
     // Validate request
     //TODO - Write your code here to delete the note using noteid
     try {
-        const deletedNote= await noteModel.findByIdAndDelete(req.params.noteid,req.body);
-        if (!deletedNote) {
-            res.status(201).send({message: "No note to Delete"})
-        }
-      } catch (err) {
-        res.status(500).send(err)
-    }
-
-});
+        await noteModel.findByIdAndDelete(req.params.noteId);
+        res.send("note Id deleted");
+      } catch (error) {
+        res.status(500).send(error);
+      }
+    });
 
 module.exports = routes
